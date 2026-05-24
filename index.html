@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rolleta Home — Підбір ролет на вікна</title>
+<title>Rollet Home — Підбір ролет на вікна</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -770,7 +770,7 @@ function regenerateResults() {
 async function submitRequest() {
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  btn.textContent = 'Надсилаємо...';
+  btn.textContent = 'Надіслати';
 
   const width = document.getElementById('width').value;
   const height = document.getElementById('height').value;
@@ -790,7 +790,7 @@ async function submitRequest() {
   }
 
   const msg =
-    `🏠 *Нова заявка — Rolleta Home*\n\n` +
+    `🏠 *Нова заявка — Rollet Home*\n\n` +
     `📐 *Розміри вікна:* ${width} × ${height} см\n` +
     `🪟 *Кількість вікон:* ${count} шт\n` +
     `💬 *Побажання:* ${wishes || 'не вказано'}\n\n` +
