@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rolleta Home — Підбір ролет на вікна</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F5F0E8;
+    --sand: #E8DFD0;
+    --warm: #C9B99A;
+    --brown: #8B6F47;
+    --dark: #3A2E22;
+    --text: #4A3728;
+    --muted: #8A7A6A;
+    --white: #FEFCF8;
+    --accent: #A67C52;
+  }
+
+  html, body {
+    font-family: 'Jost', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .hero {
+    background: var(--dark);
+    color: var(--white);
+    padding: 52px 32px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg, transparent, transparent 40px,
+      rgba(255,255,255,0.018) 40px, rgba(255,255,255,0.018) 41px
+    );
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--warm);
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    line-height: 1.08;
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 em { font-style: italic; color: var(--warm); }
+  .hero p {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.06em;
+  }
+
+  .steps-bar {
+    display: flex;
+    background: var(--sand);
+    border-bottom: 1px solid var(--warm);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .step-item {
+    flex: 1;
+    padding: 13px 8px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-right: 1px solid rgba(139,111,71,0.2);
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+  .step-item:last-child { border-right: none; }
+  .step-item.active { color: var(--dark); background: var(--cream); font-weight: 500; }
+  .step-item.done { color: var(--accent); }
+  .step-num {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+
+  .content {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 44px 24px 80px;
+  }
+
+  .screen { display: none; animation: fadeIn 0.4s ease; }
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+    font-weight: 400;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    font-weight: 300;
+    line-height: 1.12;
+    color: var(--dark);
+    margin-bottom: 10px;
+  }
+  .section-title em { font-style: italic; }
+  .section-sub {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 38px;
+    line-height: 1.65;
+  }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px; }
+  .field-row.single { grid-template-columns: 1fr; }
+  .field-group { display: flex; flex-direction: column; gap: 7px; }
+
+  .field-label {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .field-input, .field-select, .field-textarea {
+    background: var(--white);
+    border: 1px solid var(--sand);
+    border-radius: 0;
+    padding: 13px 16px;
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    color: var(--dark);
+    transition: border-color 0.2s;
+    outline: none;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .field-input:focus, .field-select:focus, .field-textarea:focus {
+    border-color: var(--accent);
+  }
+  .field-input::placeholder, .field-textarea::placeholder {
+    color: var(--warm);
+    font-weight: 300;
+  }
+  .field-textarea { resize: vertical; min-height: 96px; line-height: 1.65; }
+
+  .photo-upload {
+    border: 1px dashed var(--warm);
+    background: var(--white);
+    padding: 34px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .photo-upload:hover { border-color: var(--accent); background: #FAF6F0; }
+  .photo-upload input {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    width: 100%; height: 100%;
+  }
+  .photo-upload-icon { font-size: 32px; margin-bottom: 10px; display: block; }
+  .photo-upload p { font-size: 13px; color: var(--muted); font-weight: 300; margin-bottom: 4px; }
+  .photo-upload small {
+    font-size: 11px; color: var(--warm);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .photo-preview {
+    max-width: 100%; max-height: 180px; object-fit: cover;
+    margin-top: 14px; display: none; border: 1px solid var(--sand);
+  }
+
+  .phone-note {
+    font-size: 12px; color: var(--muted); font-weight: 300;
+    margin-top: 7px; font-style: italic; line-height: 1.55;
+  }
+
+  .btn-primary {
+    width: 100%;
+    background: var(--dark);
+    color: var(--white);
+    border: none;
+    padding: 17px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 32px;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--accent); }
+  .btn-primary:disabled { background: var(--warm); cursor: not-allowed; opacity: 0.7; }
+
+  .btn-outline {
+    width: 100%;
+    background: transparent;
+    color: var(--dark);
+    border: 1px solid rgba(58,46,34,0.35);
+    padding: 15px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 12px;
+  }
+  .btn-outline:hover { background: var(--sand); border-color: var(--accent); }
+
+  .analyzing-screen { text-align: center; padding: 60px 0; }
+  .loader-ring {
+    width: 68px; height: 68px;
+    border: 1px solid var(--sand);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1.2s linear infinite;
+    margin: 0 auto 28px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .analyzing-screen h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px; font-weight: 300;
+    margin-bottom: 10px; color: var(--dark);
+  }
+  .analyzing-screen p {
+    font-size: 14px; color: var(--muted);
+    font-weight: 300; line-height: 1.75;
+  }
+  .analyzing-dots span {
+    display: inline-block;
+    width: 5px; height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin: 0 3px;
+    animation: dot 1.4s ease-in-out infinite;
+  }
+  .analyzing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .analyzing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dot { 0%,80%,100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+  .results-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px; }
+  .result-card {
+    background: var(--white);
+    border: 1px solid var(--sand);
+    padding: 26px 24px;
+    cursor: pointer;
+    transition: all 0.22s;
+    position: relative;
+  }
+  .result-card:hover { border-color: var(--accent); }
+  .result-card.selected { border-color: var(--accent); background: #FDFAF5; }
+  .result-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 18px; right: 18px;
+    width: 26px; height: 26px;
+    background: var(--accent);
+    color: white;
+    font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+  }
+  .card-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--warm);
+    margin-bottom: 10px;
+  }
+  .card-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 400;
+    color: var(--dark); margin-bottom: 6px;
+  }
+  .card-type {
+    font-size: 12px; color: var(--accent);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 400; margin-bottom: 10px;
+  }
+  .card-desc {
+    font-size: 13px; color: var(--muted);
+    font-weight: 300; line-height: 1.65;
+    margin-bottom: 18px;
+  }
+  .swatches-label {
+    font-size: 10px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 8px; font-weight: 400;
+  }
+  .card-swatches { display: flex; gap: 9px; margin-bottom: 18px; flex-wrap: wrap; }
+  .swatch {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: transform 0.15s;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .swatch:hover { transform: scale(1.12); }
+  .swatch.active::after {
+    content: '';
+    position: absolute; inset: -4px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent);
+  }
+  .card-footer {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--sand);
+    padding-top: 16px;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .card-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 400; color: var(--dark);
+  }
+  .card-price span { font-size: 13px; color: var(--muted); font-weight: 300; }
+  .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--accent);
+    border: 1px solid var(--sand); padding: 4px 9px;
+    font-weight: 400;
+  }
+
+  .other-btn {
+    width: 100%;
+    background: var(--sand);
+    color: var(--dark);
+    border: 1px dashed var(--warm);
+    padding: 19px 24px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px; font-weight: 400;
+    letter-spacing: 0.17em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center;
+    justify-content: center; gap: 12px;
+  }
+  .other-btn:hover { border-color: var(--accent); background: var(--white); }
+  .other-btn-icon { font-size: 20px; }
+
+  .selected-summary {
+    background: var(--sand);
+    border: 1px solid var(--warm);
+    padding: 18px 22px;
+    margin: 20px 0 0;
+    display: none;
+  }
+  .selected-summary.show { display: block; }
+  .summary-label {
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 5px;
+  }
+  .summary-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; color: var(--dark); font-weight: 400;
+  }
+
+  .success-screen { text-align: center; padding: 56px 0; }
+  .success-icon { font-size: 52px; margin-bottom: 24px; display: block; }
+  .success-screen h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px; font-weight: 300;
+    color: var(--dark); margin-bottom: 14px;
+  }
+  .success-screen p {
+    font-size: 14px; color: var(--muted);
+    font-weight: 300; line-height: 1.85;
+    max-width: 380px; margin: 0 auto 32px;
+  }
+
+  .divider { height: 1px; background: var(--sand); margin: 32px 0; }
+
+  .error-msg {
+    font-size: 12px; color: #C0392B;
+    margin-top: 5px; font-style: italic; display: none;
+  }
+
+  .color-name-tip {
+    font-size: 11px; color: var(--accent);
+    font-style: italic; margin-top: 4px;
+    min-height: 16px; transition: opacity 0.2s;
+  }
+
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 38px; }
+    .section-title { font-size: 30px; }
+    .field-row { grid-template-columns: 1fr; }
+    .step-item { padding: 10px 4px; font-size: 9px; }
+    .step-num { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-tag">Rolleta Home — підбір ролет</div>
+  <h1>Ролети, що<br><em>створюють затишок</em></h1>
+  <p>Підберемо ідеальний варіант під ваш інтер'єр</p>
+</div>
+
+<div class="steps-bar" id="stepsBar">
+  <div class="step-item active" data-step="1"><span class="step-num">01</span>Розміри</div>
+  <div class="step-item" data-step="2"><span class="step-num">02</span>Побажання</div>
+  <div class="step-item" data-step="3"><span class="step-num">03</span>Аналіз</div>
+  <div class="step-item" data-step="4"><span class="step-num">04</span>Варіанти</div>
+  <div class="step-item" data-step="5"><span class="step-num">05</span>Готово</div>
+</div>
+
+<div class="content">
+
+  <!-- SCREEN 1: Dimensions -->
+  <div class="screen active" id="screen1">
+    <div class="section-label">Крок перший</div>
+    <h2 class="section-title">Розміри та<br><em>кількість вікон</em></h2>
+    <p class="section-sub">Введіть точні розміри — ми підберемо ролети ідеально під ваші вікна та розрахуємо вартість.</p>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Ширина вікна (см)</label>
+        <input class="field-input" type="number" id="width" placeholder="напр. 120" min="20" max="500">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Висота вікна (см)</label>
+        <input class="field-input" type="number" id="height" placeholder="напр. 180" min="20" max="400">
+      </div>
+    </div>
+
+    <div class="field-row single">
+      <div class="field-group">
+        <label class="field-label">Кількість вікон</label>
+        <input class="field-input" type="number" id="count" placeholder="напр. 3" min="1" max="50">
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="goToStep2()">Далі →</button>
+  </div>
+
+  <!-- SCREEN 2: Wishes -->
+  <div class="screen" id="screen2">
+    <div class="section-label">Крок другий</div>
+    <h2 class="section-title">Ваші<br><em>побажання</em></h2>
+    <p class="section-sub">Розкажіть більше — це допоможе нам сформувати найкращу підбірку саме для вас.</p>
+
+    <div class="field-row single" style="margin-bottom:22px">
+      <div class="field-group">
+        <label class="field-label">Побажання до ролет</label>
+        <textarea class="field-textarea" id="wishes" placeholder="Наприклад: хочу затемнення, у кімнаті бежево-білі тони, стиль мінімалізм, є маленька дитина, спальня..."></textarea>
+      </div>
+    </div>
+
+    <div class="field-row single" style="margin-bottom:0">
+      <div class="field-group">
+        <label class="field-label">Фото кімнати (необов'язково)</label>
+        <div class="photo-upload" id="photoUpload">
+          <input type="file" accept="image/*" id="photoInput" onchange="handlePhoto(this)">
+          <span class="photo-upload-icon">📷</span>
+          <p>Натисніть або перетягніть фото інтер'єру</p>
+          <small>jpg, png · до 10 мб</small>
+          <img class="photo-preview" id="photoPreview" alt="Фото кімнати">
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="field-row single">
+      <div class="field-group">
+        <label class="field-label">Ваш номер телефону</label>
+        <input class="field-input" type="tel" id="phone" placeholder="+38 (___) ___ __ __">
+        <p class="phone-note">Після підбору ми надішлемо вам персональну підбірку з фото матеріалів та детальними цінами</p>
+        <span class="error-msg" id="phoneError">Будь ласка, введіть номер телефону</span>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="goToAnalysis()">Підібрати ролети →</button>
+    <button class="btn-outline" onclick="showScreen(1)">← Назад</button>
+  </div>
+
+  <!-- SCREEN 3: Analyzing -->
+  <div class="screen" id="screen3">
+    <div class="analyzing-screen">
+      <div class="loader-ring"></div>
+      <h2>Підбираємо варіанти</h2>
+      <p>
+        Аналізуємо ваші побажання та розміри,<br>
+        формуємо персональну підбірку<br><br>
+        <span class="analyzing-dots">
+          <span></span><span></span><span></span>
+        </span>
+      </p>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: Results -->
+  <div class="screen" id="screen4">
+    <div class="section-label">Ваша підбірка</div>
+    <h2 class="section-title">Три <em>варіанти</em><br>під ваш інтер'єр</h2>
+    <p class="section-sub">Ми підібрали найкращі рішення. Оберіть той, що подобається найбільше.</p>
+
+    <div class="results-grid" id="resultsGrid"></div>
+
+    <button class="other-btn" onclick="regenerateResults()">
+      <span class="other-btn-icon">↻</span>
+      Хочу інший варіант
+    </button>
+
+    <div class="selected-summary" id="selectedSummary">
+      <div class="summary-label">Обраний варіант</div>
+      <div class="summary-name" id="selectedName">—</div>
+    </div>
+
+    <button class="btn-primary" id="submitBtn" onclick="submitRequest()" disabled>Залишити заявку</button>
+    <button class="btn-outline" onclick="showScreen(2)">← Назад</button>
+  </div>
+
+  <!-- SCREEN 5: Success -->
+  <div class="screen" id="screen5">
+    <div class="success-screen">
+      <span class="success-icon">✦</span>
+      <h2>Заявку прийнято!</h2>
+      <p>Наш менеджер зв'яжеться з вами найближчим часом і надішле детальну підбірку з фото та цінами на обрані ролети.</p>
+      <button class="btn-primary" style="max-width:300px;margin:0 auto;display:block" onclick="restart()">Нова підбірка</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const BOT_TOKEN = '8824279126:AAHuXHflCAk0_TAt5FQH_g4bpVB-EKggY3c';
+const CHAT_ID = '564385740';
+
+let selectedVariant = null;
+let selectedColorMap = {};
+let photoBase64 = null;
+let usingExtra = false;
+
+const ROLLER_DATA = [
+  {
+    name: 'Linen Breeze',
+    type: 'Льон преміум',
+    desc: 'Натуральна лляна тканина з м\'яким затемненням 60%. Ідеально пропускає розсіяне світло — створює теплу, спокійну атмосферу в будь-якій кімнаті.',
+    tags: ['Затемнення 60%', 'Натуральний льон', 'Антистатик'],
+    colors: ['#E8DDD0','#C4A882','#8B7355','#D4C4B0','#F0E8D8'],
+    colorNames: ['Вершковий','Пісочний','Тауп','Мокко','Слонова кістка'],
+    pricePerM: 890
+  },
+  {
+    name: 'Velvet Noir',
+    type: 'Оксамит блекаут',
+    desc: 'Повне затемнення 100%. Преміальна оксамитова текстура з термоізоляцією. Ідеальне рішення для спальні, дитячої або домашнього кінотеатру.',
+    tags: ['Блекаут 100%', 'Термоізоляція', 'Оксамит'],
+    colors: ['#2C2C2C','#4A3728','#5C4A3A','#8B6F47','#3A3A3A'],
+    colorNames: ['Антрацит','Шоколад','Кориця','Карамель','Графіт'],
+    pricePerM: 1250
+  },
+  {
+    name: 'Sheer Poetry',
+    type: 'Вуаль прозора',
+    desc: 'Легка прозора тканина, що м\'яко розсіює сонячне світло. Додає легкості та повітряності — ідеально для вітальні чи кухні.',
+    tags: ['Прозора', 'УФ-захист 40%', 'Легка тканина'],
+    colors: ['#FEFCF8','#F5F0E8','#EDE4D8','#E8DDD0','#F8F4EE'],
+    colorNames: ['Білий','Крем','Бежевий','Пісок','Перламутр'],
+    pricePerM: 720
+  }
+];
+
+const EXTRA_DATA = [
+  {
+    name: 'Bamboo Spirit',
+    type: 'Бамбукове плетіння',
+    desc: 'Екологічні ролети з натурального бамбуку. Унікальна фактура та природній вигляд. Добре пропускає розсіяне світло, додає тепла та стилю.',
+    tags: ['Еко-матеріал', 'Натуральний бамбук', 'Фактурний'],
+    colors: ['#C4A882','#A8854A','#8B6F47','#D4B896','#E8D4BC'],
+    colorNames: ['Бамбук натур','Медовий','Горіховий','Кремовий','Ванільний'],
+    pricePerM: 980
+  },
+  {
+    name: 'Cloud Dusk',
+    type: 'День-ніч зебра',
+    desc: 'Подвійна система: денна смуга для м\'якого розсіювання та нічна для повного затемнення. Два в одному — максимальний комфорт протягом доби.',
+    tags: ['День-ніч', 'Зебра', 'Подвійне полотно'],
+    colors: ['#F0EAE0','#E0D4C4','#C8B8A4','#B4A090','#D8CCBC'],
+    colorNames: ['Ліон','Пісочний','Мокко','Капучіно','Латте'],
+    pricePerM: 1100
+  },
+  {
+    name: 'Forest Dew',
+    type: 'Шенілл природній',
+    desc: 'Фактурна тканина шенілл у природних зелених відтінках. Привносить природу в інтер\'єр, теплі відчуття. М\'яке затемнення 70%.',
+    tags: ['Затемнення 70%', 'Шенілл', 'Природний стиль'],
+    colors: ['#7A8C6E','#5A7A5A','#8FA882','#4A6B4A','#9EB094'],
+    colorNames: ['Шавлія','Смарагд','Піній','Малахіт','Оливка'],
+    pricePerM: 1050
+  }
+];
+
+function updateSteps(step) {
+  document.querySelectorAll('.step-item').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.classList.remove('active', 'done');
+    if (s === step) el.classList.add('active');
+    else if (s < step) el.classList.add('done');
+  });
+}
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen' + n).classList.add('active');
+  updateSteps(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToStep2() {
+  const w = document.getElementById('width').value;
+  const h = document.getElementById('height').value;
+  const c = document.getElementById('count').value;
+  if (!w || !h || !c) {
+    alert('Будь ласка, заповніть усі поля розмірів');
+    return;
+  }
+  showScreen(2);
+}
+
+function handlePhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    photoBase64 = e.target.result;
+    const preview = document.getElementById('photoPreview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function goToAnalysis() {
+  const phone = document.getElementById('phone').value.trim();
+  const errEl = document.getElementById('phoneError');
+  if (!phone) {
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  showScreen(3);
+  usingExtra = false;
+  setTimeout(() => buildResults(ROLLER_DATA), 2600);
+}
+
+function calcPrice(pricePerM) {
+  const w = parseFloat(document.getElementById('width').value) || 100;
+  const h = parseFloat(document.getElementById('height').value) || 150;
+  const cnt = parseFloat(document.getElementById('count').value) || 1;
+  const area = (w / 100) * (h / 100);
+  return Math.round(pricePerM * area * cnt);
+}
+
+function buildResults(data) {
+  selectedVariant = null;
+  selectedColorMap = {};
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('selectedSummary').classList.remove('show');
+
+  const grid = document.getElementById('resultsGrid');
+
+  grid.innerHTML = data.map((item, i) => {
+    const price = calcPrice(item.pricePerM);
+    selectedColorMap[i] = { name: item.colorNames[0], color: item.colors[0] };
+
+    const swatches = item.colors.map((c, ci) =>
+      `<div class="swatch ${ci === 0 ? 'active' : ''}"
+        style="background:${c}"
+        onclick="selectSwatch(event,${i},${ci},'${item.colorNames[ci]}')"
+        title="${item.colorNames[ci]}"></div>`
+    ).join('');
+
+    return `
+      <div class="result-card" id="card${i}" onclick="selectCard(${i},'${item.name}',${price})">
+        <div class="card-number">Варіант 0${i + 1}</div>
+        <div class="card-name">${item.name}</div>
+        <div class="card-type">${item.type}</div>
+        <p class="card-desc">${item.desc}</p>
+        <div class="swatches-label">Оберіть колір</div>
+        <div class="card-swatches">${swatches}</div>
+        <div class="color-name-tip" id="colorTip${i}">${item.colorNames[0]}</div>
+        <div class="card-footer">
+          <div class="card-price">${price.toLocaleString()} ₴ <span>/ комплект</span></div>
+          <div class="card-tags">${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  showScreen(4);
+}
+
+function selectSwatch(event, cardIdx, colorIdx, colorName) {
+  event.stopPropagation();
+  const card = document.getElementById('card' + cardIdx);
+  card.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  selectedColorMap[cardIdx] = { name: colorName };
+  const tip = document.getElementById('colorTip' + cardIdx);
+  if (tip) tip.textContent = colorName;
+  if (selectedVariant === cardIdx) updateSummary(cardIdx);
+}
+
+function selectCard(idx, name, price) {
+  document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('card' + idx).classList.add('selected');
+  selectedVariant = idx;
+  updateSummary(idx);
+  document.getElementById('submitBtn').disabled = false;
+}
+
+function updateSummary(idx) {
+  const data = usingExtra ? EXTRA_DATA : ROLLER_DATA;
+  const item = data[idx];
+  if (!item) return;
+  const color = selectedColorMap[idx]?.name || item.colorNames[0];
+  const price = calcPrice(item.pricePerM);
+  document.getElementById('selectedName').textContent =
+    item.name + ' · ' + color + ' · ' + price.toLocaleString() + ' ₴';
+  document.getElementById('selectedSummary').classList.add('show');
+}
+
+function regenerateResults() {
+  showScreen(3);
+  usingExtra = true;
+  setTimeout(() => buildResults(EXTRA_DATA), 1800);
+}
+
+async function submitRequest() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Надсилаємо...';
+
+  const width = document.getElementById('width').value;
+  const height = document.getElementById('height').value;
+  const count = document.getElementById('count').value;
+  const wishes = document.getElementById('wishes').value;
+  const phone = document.getElementById('phone').value;
+
+  const data = usingExtra ? EXTRA_DATA : ROLLER_DATA;
+  let variantName = '—', variantType = '—', variantColor = '—', variantPrice = '—';
+
+  if (selectedVariant !== null && data[selectedVariant]) {
+    const item = data[selectedVariant];
+    variantName = item.name;
+    variantType = item.type;
+    variantColor = selectedColorMap[selectedVariant]?.name || item.colorNames[0];
+    variantPrice = calcPrice(item.pricePerM).toLocaleString() + ' ₴';
+  }
+
+  const msg =
+    `🏠 *Нова заявка — Rolleta Home*\n\n` +
+    `📐 *Розміри вікна:* ${width} × ${height} см\n` +
+    `🪟 *Кількість вікон:* ${count} шт\n` +
+    `💬 *Побажання:* ${wishes || 'не вказано'}\n\n` +
+    `✨ *Обраний варіант:* ${variantName}\n` +
+    `🧵 *Тип:* ${variantType}\n` +
+    `🎨 *Колір:* ${variantColor}\n` +
+    `💰 *Орієнтовна вартість:* ${variantPrice}\n\n` +
+    `📞 *Телефон:* ${phone}`;
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'Markdown' })
+    });
+    const result = await res.json();
+
+    if (result.ok) {
+      if (photoBase64) {
+        try {
+          const blob = await (await fetch(photoBase64)).blob();
+          const fd = new FormData();
+          fd.append('chat_id', CHAT_ID);
+          fd.append('photo', blob, 'room.jpg');
+          fd.append('caption', '📷 Фото кімнати · ' + phone);
+          await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+            method: 'POST', body: fd
+          });
+        } catch(e) {}
+      }
+      showScreen(5);
+    } else {
+      throw new Error('Telegram API error');
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Залишити заявку';
+    alert('Помилка відправки. Будь ласка, спробуйте ще раз або зателефонуйте нам.');
+  }
+}
+
+function restart() {
+  document.getElementById('width').value = '';
+  document.getElementById('height').value = '';
+  document.getElementById('count').value = '';
+  document.getElementById('wishes').value = '';
+  document.getElementById('phone').value = '';
+  const preview = document.getElementById('photoPreview');
+  preview.style.display = 'none';
+  preview.src = '';
+  photoBase64 = null;
+  selectedVariant = null;
+  usingExtra = false;
+  showScreen(1);
+}
+</script>
+</body>
+</html>
