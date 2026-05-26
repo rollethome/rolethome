@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RolletHome — Підбір ролет</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a1f36;
+    --blue: #2563eb;
+    --blue-light: #3b82f6;
+    --accent: #dbeafe;
+    --white: #ffffff;
+    --gray: #f8fafc;
+    --gray2: #e2e8f0;
+    --gray3: #94a3b8;
+    --text: #0f172a;
+    --radius: 16px;
+    --shadow: 0 4px 32px rgba(37,99,235,0.10);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: #f0f5ff;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #1e3a8a 60%, #2563eb 100%);
+    padding: 48px 24px 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -80px;
+    width: 320px; height: 320px;
+    background: rgba(59,130,246,0.18);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -60px;
+    width: 260px; height: 260px;
+    background: rgba(37,99,235,0.13);
+    border-radius: 50%;
+  }
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+    position: relative; z-index: 1;
+  }
+  .logo-icon {
+    width: 48px; height: 48px;
+    background: white;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--blue);
+    letter-spacing: -1px;
+  }
+  .logo-text {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    letter-spacing: -0.5px;
+  }
+  .hero h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(22px, 5vw, 38px);
+    font-weight: 700;
+    color: white;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    position: relative; z-index: 1;
+  }
+  .hero h1 span { color: #93c5fd; }
+  .hero p {
+    color: #bfdbfe;
+    font-size: 16px;
+    font-weight: 400;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+    position: relative; z-index: 1;
+  }
+  .hero-steps {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+    position: relative; z-index: 1;
+  }
+  .hero-step {
+    background: rgba(255,255,255,0.13);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 100px;
+    padding: 6px 14px;
+    color: #e0eaff;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .hero-step .num {
+    width: 20px; height: 20px;
+    background: var(--blue-light);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+  }
+
+  /* FORM WRAPPER */
+  .form-wrap {
+    max-width: 640px;
+    margin: -24px auto 0;
+    padding: 0 16px 64px;
+    position: relative; z-index: 10;
+  }
+
+  /* STEP CARD */
+  .step-card {
+    background: white;
+    border-radius: 24px;
+    padding: 32px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+  .step-card.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .step-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 8px;
+  }
+  .step-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .step-desc {
+    font-size: 14px;
+    color: var(--gray3);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  /* PROGRESS */
+  .progress-bar {
+    height: 4px;
+    background: var(--gray2);
+    border-radius: 100px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--blue-light));
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+
+  /* SIZES */
+  .sizes-list { display: flex; flex-direction: column; gap: 12px; }
+  .size-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gray);
+    border-radius: 14px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--gray2);
+    transition: border-color 0.2s;
+  }
+  .size-row:focus-within { border-color: var(--blue); }
+  .size-num {
+    width: 28px; height: 28px;
+    background: var(--blue);
+    border-radius: 8px;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .size-inputs { display: flex; align-items: center; gap: 8px; flex: 1; }
+  .size-inp {
+    border: none;
+    background: transparent;
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    width: 80px;
+    outline: none;
+    text-align: center;
+  }
+  .size-inp::placeholder { color: var(--gray3); font-weight: 400; }
+  .size-sep { color: var(--gray3); font-size: 13px; font-weight: 600; }
+  .size-unit { color: var(--gray3); font-size: 12px; }
+  .remove-size {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #cbd5e1;
+    font-size: 18px;
+    line-height: 1;
+    transition: color 0.2s;
+    padding: 4px;
+  }
+  .remove-size:hover { color: #ef4444; }
+  .add-size-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: 1.5px dashed var(--blue-light);
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: var(--blue);
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .add-size-btn:hover { background: var(--accent); }
+  .add-icon {
+    width: 28px; height: 28px;
+    background: var(--blue);
+    border-radius: 8px;
+    color: white;
+    font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 300;
+  }
+
+  /* QUANTITY */
+  .qty-control {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--gray);
+    border-radius: 16px;
+    padding: 16px 20px;
+    width: fit-content;
+  }
+  .qty-btn {
+    width: 44px; height: 44px;
+    background: white;
+    border: 1.5px solid var(--gray2);
+    border-radius: 12px;
+    font-size: 22px;
+    color: var(--navy);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 300;
+    transition: all 0.2s;
+  }
+  .qty-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .qty-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--navy);
+    min-width: 48px;
+    text-align: center;
+  }
+
+  /* CHOICES (type, room, color) */
+  .choices { display: flex; flex-wrap: wrap; gap: 10px; }
+  .choice-btn {
+    padding: 10px 18px;
+    border-radius: 100px;
+    border: 1.5px solid var(--gray2);
+    background: white;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .choice-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .choice-btn.selected {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: white;
+  }
+  .choice-btn .emoji { font-size: 16px; }
+
+  /* COLOR SWATCHES */
+  .color-swatches { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+  .swatch {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 2.5px solid transparent;
+    transition: transform 0.2s, border-color 0.2s;
+    position: relative;
+  }
+  .swatch:hover { transform: scale(1.1); }
+  .swatch.selected { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.2); }
+  .swatch[title="Будь-який"] {
+    background: linear-gradient(135deg, #f472b6, #f59e0b, #10b981, #3b82f6, #8b5cf6);
+  }
+
+  /* UPLOAD */
+  .upload-area {
+    border: 2px dashed var(--gray2);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--gray);
+    position: relative;
+  }
+  .upload-area:hover, .upload-area.dragover { border-color: var(--blue); background: var(--accent); }
+  .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .upload-icon { font-size: 36px; margin-bottom: 8px; }
+  .upload-text { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .upload-sub { font-size: 13px; color: var(--gray3); }
+  .upload-preview {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px;
+  }
+  .preview-thumb {
+    width: 80px; height: 80px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 2px solid var(--gray2);
+  }
+
+  /* INPUTS */
+  .inp-field {
+    width: 100%;
+    padding: 16px 18px;
+    border: 1.5px solid var(--gray2);
+    border-radius: 14px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--gray);
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 12px;
+  }
+  .inp-field:focus { border-color: var(--blue); background: white; }
+  .inp-field::placeholder { color: var(--gray3); }
+  .phone-wrap { position: relative; }
+  .phone-prefix {
+    position: absolute;
+    left: 18px; top: 50%;
+    transform: translateY(-50%);
+    font-weight: 600;
+    color: var(--text);
+    font-size: 15px;
+  }
+  .phone-inp { padding-left: 56px !important; }
+
+  /* BUDGET */
+  .budget-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .budget-btn {
+    padding: 14px 10px;
+    border-radius: 14px;
+    border: 1.5px solid var(--gray2);
+    background: white;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .budget-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .budget-btn.selected { background: var(--blue); border-color: var(--blue); color: white; }
+  .budget-price { font-size: 15px; font-weight: 700; display: block; margin-bottom: 2px; }
+
+  /* NAVIGATION */
+  .nav-btns {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .btn-next {
+    flex: 1;
+    padding: 16px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+  }
+  .btn-next:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(37,99,235,0.4); }
+  .btn-next:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-back {
+    padding: 16px 20px;
+    background: white;
+    color: var(--navy);
+    border: 1.5px solid var(--gray2);
+    border-radius: 14px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--blue); color: var(--blue); }
+
+  /* SUCCESS */
+  .success-card {
+    background: white;
+    border-radius: 24px;
+    padding: 48px 28px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    display: none;
+  }
+  .success-card.active { display: block; animation: fadeUp 0.5s ease; }
+  .success-icon {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    box-shadow: 0 8px 24px rgba(16,185,129,0.3);
+  }
+  .success-card h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .success-card p { color: var(--gray3); font-size: 15px; line-height: 1.6; }
+  .success-card .highlight {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--blue);
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #ef4444;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 999;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* TEXTAREA */
+  textarea.inp-field { resize: vertical; min-height: 80px; }
+
+  /* NOTE */
+  .note {
+    font-size: 12px;
+    color: var(--gray3);
+    margin-top: 8px;
+    display: flex; align-items: flex-start; gap: 6px;
+  }
+  .note::before { content: 'ℹ️'; font-size: 12px; margin-top: 1px; }
+
+  @media (max-width: 400px) {
+    .budget-grid { grid-template-columns: 1fr; }
+    .step-card { padding: 24px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="logo">
+    <div class="logo-icon">R↗</div>
+    <span class="logo-text">rollethome.ua</span>
+  </div>
+  <h1>Підберіть ролети<br><span>під ваше вікно</span></h1>
+  <p>Заповніть форму — ми підберемо ідеальний варіант і надішлемо підбірку особисто для вас</p>
+  <div class="hero-steps">
+    <div class="hero-step"><span class="num">1</span> Розміри</div>
+    <div class="hero-step"><span class="num">2</span> Тип ролет</div>
+    <div class="hero-step"><span class="num">3</span> Колір і кімната</div>
+    <div class="hero-step"><span class="num">4</span> Контакти</div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-wrap">
+
+  <!-- STEP 1: SIZES -->
+  <div class="step-card active" id="step1">
+    <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+    <div class="step-label">Крок 1 з 5</div>
+    <div class="step-title">Розміри вікон</div>
+    <div class="step-desc">Вкажіть ширину та висоту кожного вікна в сантиметрах</div>
+    <div class="sizes-list" id="sizesList">
+      <div class="size-row">
+        <div class="size-num">1</div>
+        <div class="size-inputs">
+          <input class="size-inp" type="number" placeholder="Ширина" min="1" max="999">
+          <span class="size-sep">×</span>
+          <input class="size-inp" type="number" placeholder="Висота" min="1" max="999">
+          <span class="size-unit">см</span>
+        </div>
+      </div>
+    </div>
+    <button class="add-size-btn" id="addSizeBtn">
+      <span class="add-icon">+</span>
+      Додати ще одне вікно
+    </button>
+    <div class="nav-btns">
+      <button class="btn-next" onclick="nextStep(1)">Далі →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: QUANTITY -->
+  <div class="step-card" id="step2">
+    <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
+    <div class="step-label">Крок 2 з 5</div>
+    <div class="step-title">Кількість вікон</div>
+    <div class="step-desc">Скільки вікон потрібно обладнати ролетами?</div>
+    <div class="qty-control">
+      <button class="qty-btn" onclick="changeQty(-1)">−</button>
+      <div class="qty-num" id="qtyNum">1</div>
+      <button class="qty-btn" onclick="changeQty(1)">+</button>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="prevStep(2)">← Назад</button>
+      <button class="btn-next" onclick="nextStep(2)">Далі →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: TYPE + ROOM + COLOR -->
+  <div class="step-card" id="step3">
+    <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+    <div class="step-label">Крок 3 з 5</div>
+    <div class="step-title">Побажання до ролет</div>
+    <div class="step-desc">Оберіть тип, колір та приміщення</div>
+
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Тип ролет</div>
+      <div class="choices" id="typeChoices">
+        <button class="choice-btn" data-val="Рулонні"><span class="emoji">🪟</span> Рулонні</button>
+        <button class="choice-btn" data-val="День-ніч"><span class="emoji">🌗</span> День-ніч</button>
+        <button class="choice-btn" data-val="Блекаут"><span class="emoji">🌑</span> Блекаут</button>
+        <button class="choice-btn" data-val="Підкажіть мені"><span class="emoji">💡</span> Підкажіть мені</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Приміщення</div>
+      <div class="choices" id="roomChoices">
+        <button class="choice-btn" data-val="Спальня"><span class="emoji">🛏</span> Спальня</button>
+        <button class="choice-btn" data-val="Вітальня"><span class="emoji">🛋</span> Вітальня</button>
+        <button class="choice-btn" data-val="Кухня"><span class="emoji">🍳</span> Кухня</button>
+        <button class="choice-btn" data-val="Дитяча"><span class="emoji">🧸</span> Дитяча</button>
+        <button class="choice-btn" data-val="Офіс"><span class="emoji">💼</span> Офіс</button>
+        <button class="choice-btn" data-val="Ванна"><span class="emoji">🚿</span> Ванна</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Побажання по кольору</div>
+      <div class="color-swatches" id="colorSwatches">
+        <div class="swatch selected" data-val="Будь-який" title="Будь-який"></div>
+        <div class="swatch" data-val="Білий" title="Білий" style="background:#f8fafc;border:1.5px solid #e2e8f0"></div>
+        <div class="swatch" data-val="Бежевий" title="Бежевий" style="background:#d4c5a9"></div>
+        <div class="swatch" data-val="Сірий" title="Сірий" style="background:#94a3b8"></div>
+        <div class="swatch" data-val="Темно-сірий" title="Темно-сірий" style="background:#475569"></div>
+        <div class="swatch" data-val="Коричневий" title="Коричневий" style="background:#92400e"></div>
+        <div class="swatch" data-val="Чорний" title="Чорний" style="background:#0f172a"></div>
+        <div class="swatch" data-val="Синій" title="Синій" style="background:#2563eb"></div>
+        <div class="swatch" data-val="Зелений" title="Зелений" style="background:#059669"></div>
+      </div>
+      <div style="font-size:12px;color:var(--gray3);margin-top:8px;">Натисніть на колір, щоб обрати</div>
+    </div>
+
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Додаткові побажання</div>
+      <textarea class="inp-field" id="extraNote" placeholder="Наприклад: хочу теплі тони, є панорамне вікно, тощо..."></textarea>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-back" onclick="prevStep(3)">← Назад</button>
+      <button class="btn-next" onclick="nextStep(3)">Далі →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: PHOTO + PHONE -->
+  <div class="step-card" id="step4">
+    <div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div>
+    <div class="step-label">Крок 4 з 5</div>
+    <div class="step-title">Фото та контакт</div>
+    <div class="step-desc">Фото допоможе нам підібрати ролети точніше під ваш інтер'єр</div>
+
+    <div class="upload-area" id="uploadArea">
+      <input type="file" accept="image/*" multiple id="photoInput" onchange="handlePhoto(event)">
+      <div class="upload-icon">📷</div>
+      <div class="upload-text">Додати фото кімнати</div>
+      <div class="upload-sub">За бажанням · JPG, PNG, HEIC</div>
+    </div>
+    <div class="upload-preview" id="photoPreview"></div>
+
+    <div style="margin-top:20px">
+      <div class="phone-wrap">
+        <span class="phone-prefix">+380</span>
+        <input class="inp-field phone-inp" type="tel" id="phoneInp" placeholder="XX XXX XX XX" maxlength="12">
+      </div>
+      <div class="note">Після отримання заявки ми підберемо для вас підбірку ролет і зв'яжемося з вами</div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-back" onclick="prevStep(4)">← Назад</button>
+      <button class="btn-next" onclick="nextStep(4)">Далі →</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: BUDGET -->
+  <div class="step-card" id="step5">
+    <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+    <div class="step-label">Крок 5 з 5</div>
+    <div class="step-title">Бюджет</div>
+    <div class="step-desc">Оберіть орієнтовний бюджет за одне вікно — ми підберемо найкращі варіанти</div>
+
+    <div class="budget-grid" id="budgetGrid">
+      <button class="budget-btn" data-val="1000–2000 грн"><span class="budget-price">1000–2000 ₴</span>Стандарт</button>
+      <button class="budget-btn" data-val="2000–4000 грн"><span class="budget-price">2000–4000 ₴</span>Комфорт</button>
+      <button class="budget-btn" data-val="4000–7000 грн"><span class="budget-price">4000–7000 ₴</span>Преміум</button>
+      <button class="budget-btn" data-val="7000+ грн"><span class="budget-price">7000+ ₴</span>Люкс</button>
+      <button class="budget-btn" data-val="Не визначився" style="grid-column: span 2"><span class="budget-price">🤷</span>Ще не визначився</button>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-back" onclick="prevStep(5)">← Назад</button>
+      <button class="btn-next" id="submitBtn" onclick="submitForm()">
+        Надіслати заявку ✓
+      </button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-card" id="successCard">
+    <div class="success-icon">✓</div>
+    <h2>Заявку отримано!</h2>
+    <p>Ми вже підбираємо для вас ідеальні ролети.<br>Зовсім скоро зв'яжемося з вами</p>
+    <div class="highlight">📞 Очікуйте дзвінка</div>
+    <div style="margin-top:24px;font-size:13px;color:var(--gray3);">Зазвичай ми відповідаємо протягом 30 хвилин у робочий час</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // STATE
+  const state = {
+    sizes: [],
+    qty: 1,
+    type: '',
+    room: '',
+    color: 'Будь-який',
+    note: '',
+    phone: '',
+    budget: '',
+    photos: []
+  };
+
+  let currentStep = 1;
+
+  // SIZES
+  let sizeCount = 1;
+  document.getElementById('addSizeBtn').addEventListener('click', () => {
+    if (sizeCount >= 5) { showToast('Максимум 5 вікон'); return; }
+    sizeCount++;
+    const row = document.createElement('div');
+    row.className = 'size-row';
+    row.innerHTML = `
+      <div class="size-num">${sizeCount}</div>
+      <div class="size-inputs">
+        <input class="size-inp" type="number" placeholder="Ширина" min="1" max="999">
+        <span class="size-sep">×</span>
+        <input class="size-inp" type="number" placeholder="Висота" min="1" max="999">
+        <span class="size-unit">см</span>
+      </div>
+      <button class="remove-size" onclick="removeSize(this)">×</button>
+    `;
+    document.getElementById('sizesList').appendChild(row);
+    // Update numbering
+    updateSizeNums();
+  });
+
+  function removeSize(btn) {
+    btn.closest('.size-row').remove();
+    sizeCount--;
+    updateSizeNums();
+  }
+
+  function updateSizeNums() {
+    document.querySelectorAll('.size-row .size-num').forEach((el, i) => {
+      el.textContent = i + 1;
+    });
+  }
+
+  // QUANTITY
+  function changeQty(delta) {
+    state.qty = Math.max(1, Math.min(50, state.qty + delta));
+    document.getElementById('qtyNum').textContent = state.qty;
+  }
+
+  // CHOICES
+  function setupChoices(containerId, stateKey) {
+    document.getElementById(containerId).addEventListener('click', e => {
+      const btn = e.target.closest('.choice-btn');
+      if (!btn) return;
+      document.querySelectorAll(`#${containerId} .choice-btn`).forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      state[stateKey] = btn.dataset.val;
+    });
+  }
+  setupChoices('typeChoices', 'type');
+  setupChoices('roomChoices', 'room');
+
+  // BUDGET
+  document.getElementById('budgetGrid').addEventListener('click', e => {
+    const btn = e.target.closest('.budget-btn');
+    if (!btn) return;
+    document.querySelectorAll('#budgetGrid .budget-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    state.budget = btn.dataset.val;
+  });
+
+  // COLOR SWATCHES
+  document.getElementById('colorSwatches').addEventListener('click', e => {
+    const sw = e.target.closest('.swatch');
+    if (!sw) return;
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+    sw.classList.add('selected');
+    state.color = sw.dataset.val;
+  });
+
+  // PHOTO
+  function handlePhoto(e) {
+    const files = Array.from(e.target.files);
+    state.photos = files;
+    const preview = document.getElementById('photoPreview');
+    preview.innerHTML = '';
+    files.forEach(f => {
+      const img = document.createElement('img');
+      img.className = 'preview-thumb';
+      img.src = URL.createObjectURL(f);
+      preview.appendChild(img);
+    });
+  }
+
+  // NAVIGATION
+  function nextStep(from) {
+    if (!validateStep(from)) return;
+    document.getElementById(`step${from}`).classList.remove('active');
+    currentStep = from + 1;
+    const next = document.getElementById(`step${currentStep}`);
+    if (next) next.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function prevStep(from) {
+    document.getElementById(`step${from}`).classList.remove('active');
+    currentStep = from - 1;
+    document.getElementById(`step${currentStep}`).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function validateStep(step) {
+    if (step === 1) {
+      const rows = document.querySelectorAll('.size-row');
+      let valid = false;
+      rows.forEach(row => {
+        const inps = row.querySelectorAll('.size-inp');
+        if (inps[0].value && inps[1].value) valid = true;
+      });
+      if (!valid) { showToast('Введіть розміри хоча б одного вікна'); return false; }
+      // collect sizes
+      state.sizes = [];
+      rows.forEach((row, i) => {
+        const inps = row.querySelectorAll('.size-inp');
+        if (inps[0].value && inps[1].value) {
+          state.sizes.push(`${inps[0].value}×${inps[1].value} см`);
+        }
+      });
+    }
+    if (step === 4) {
+      const phone = document.getElementById('phoneInp').value.replace(/\D/g, '');
+      if (phone.length < 9) { showToast('Введіть номер телефону'); return false; }
+      state.phone = '+380' + phone;
+    }
+    if (step === 5) {
+      if (!state.budget) { showToast('Оберіть бюджет'); return false; }
+    }
+    return true;
+  }
+
+  // SUBMIT
+  async function submitForm() {
+    if (!validateStep(5)) return;
+    state.note = document.getElementById('extraNote').value;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Надсилаємо...';
+
+    const text = buildMessage();
+
+    try {
+      const TOKEN = '8950705975:AAFVfykuq1rvLrxlyK_lhY15n70etorOSRA';
+      const CHAT_ID = '684077941';
+
+      await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: text,
+          parse_mode: 'HTML'
+        })
+      });
+
+      // send photos if any
+      for (const photo of state.photos) {
+        const fd = new FormData();
+        fd.append('chat_id', CHAT_ID);
+        fd.append('photo', photo);
+        fd.append('caption', '📸 Фото інтер\'єру клієнта');
+        await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, {
+          method: 'POST',
+          body: fd
+        });
+      }
+
+      document.getElementById('step5').classList.remove('active');
+      document.getElementById('successCard').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      showToast('Помилка. Спробуйте ще раз');
+      btn.disabled = false;
+      btn.textContent = 'Надіслати заявку ✓';
+    }
+  }
+
+  function buildMessage() {
+    return `🏠 <b>Нова заявка на підбір ролет</b>
+
+📐 <b>Розміри вікон:</b>
+${state.sizes.map((s, i) => `  ${i + 1}. ${s}`).join('\n')}
+
+🪟 <b>Кількість вікон:</b> ${state.qty}
+
+🎨 <b>Тип ролет:</b> ${state.type || 'Не вказано'}
+🏡 <b>Приміщення:</b> ${state.room || 'Не вказано'}
+🎨 <b>Побажання по кольору:</b> ${state.color}
+${state.note ? `💬 <b>Додаткові побажання:</b> ${state.note}` : ''}
+
+💰 <b>Бюджет:</b> ${state.budget}
+
+📞 <b>Телефон:</b> ${state.phone}
+${state.photos.length > 0 ? `📷 Фото: ${state.photos.length} шт.` : ''}`;
+  }
+
+  // TOAST
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>
